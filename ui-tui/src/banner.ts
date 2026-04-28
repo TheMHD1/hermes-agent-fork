@@ -81,17 +81,24 @@ interface BannerPalette {
   gold: string
 }
 
-const colorize = (art: string[], gradient: readonly number[], c: BannerPalette): Line[] => {
+const colorize = (
+  art: string[],
+  gradient: readonly number[],
+  c: BannerPalette,
+  boldRow?: (i: number) => boolean
+): Line[] => {
   const p = [c.gold, c.amber, c.bronze, c.dim]
 
-  return art.map((text, i) => [p[gradient[i]!] ?? c.dim, text, { bold: i < 2 }])
+  return art.map((text, i) => [p[gradient[i]!] ?? c.dim, text, { bold: boldRow ? boldRow(i) : false }])
 }
 
 export const LOGO_WIDTH = 98
 export const CADUCEUS_WIDTH = 30
 
+// Matches hermes_cli/banner.py: logo's first two rows are [bold #FFD700],
+// remaining rows and the entire caduceus are plain [#HEX] (no bold).
 export const logo = (c: BannerPalette, customLogo?: string): Line[] =>
-  customLogo ? parseRichMarkup(customLogo) : colorize(LOGO_ART, LOGO_GRADIENT, c)
+  customLogo ? parseRichMarkup(customLogo) : colorize(LOGO_ART, LOGO_GRADIENT, c, (i) => i < 2)
 
 export const caduceus = (c: BannerPalette, customHero?: string): Line[] =>
   customHero ? parseRichMarkup(customHero) : colorize(CADUCEUS_ART, CADUC_GRADIENT, c)
