@@ -26,7 +26,7 @@ export function Banner({ t }: { t: Theme }) {
       {cols >= (t.bannerLogo ? artWidth(logoLines) : LOGO_WIDTH) ? (
         <ArtLines lines={logoLines} />
       ) : (
-        <Text color={t.color.gold}>
+        <Text bold color={t.color.gold}>
           {t.brand.icon} NOUS HERMES
         </Text>
       )}
