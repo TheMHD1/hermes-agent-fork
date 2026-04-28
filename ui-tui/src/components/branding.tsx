@@ -19,26 +19,26 @@ export function ArtLines({ lines }: { lines: [string, string][] }) {
 
 export function Banner({ t }: { t: Theme }) {
   const cols = useStdout().stdout?.columns ?? 80
-  const logoLines = logo(t.bannerLogo || undefined)
+  const logoLines = logo(t.color, t.bannerLogo || undefined)
 
   return (
     <Box flexDirection="column" marginBottom={1}>
       {cols >= (t.bannerLogo ? artWidth(logoLines) : LOGO_WIDTH) ? (
         <ArtLines lines={logoLines} />
       ) : (
-        <Text bold color="#FFD700">
+        <Text bold color={t.color.gold}>
           {t.brand.icon} NOUS HERMES
         </Text>
       )}
 
-      <Text color="#B8860B">{t.brand.icon} Nous Research · Messenger of the Digital Gods</Text>
+      <Text color={t.color.dim}>{t.brand.icon} Nous Research · Messenger of the Digital Gods</Text>
     </Box>
   )
 }
 
 export function SessionPanel({ info, sid, t }: SessionPanelProps) {
   const cols = useStdout().stdout?.columns ?? 100
-  const heroLines = caduceus(t.bannerHero || undefined)
+  const heroLines = caduceus(t.color, t.bannerHero || undefined)
   const leftW = Math.min((artWidth(heroLines) || CADUCEUS_WIDTH) + 4, Math.floor(cols * 0.4))
   const wide = cols >= 90 && leftW + 40 < cols
   const w = Math.max(20, wide ? cols - leftW - 14 : cols - 12)
