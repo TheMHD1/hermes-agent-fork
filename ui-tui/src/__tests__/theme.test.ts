@@ -96,4 +96,9 @@ describe('fromSkin', () => {
     expect(color.ok).toBe('#008000')
     expect(color.statusGood).toBe('#008000')
   })
+
+  it('prefers banner_accent over ui_accent for banner art middle color', () => {
+    const { color } = fromSkin({ banner_accent: '#FFBF00', ui_accent: '#FFFF00' }, {})
+    expect(color.amber).toBe('#FFBF00')
+  })
 })
