@@ -205,7 +205,7 @@ export function fromSkin(
   const d = DEFAULT_THEME
   const c = (k: string) => colors[k]
 
-  const amber = c('banner_accent') ?? c('ui_accent') ?? d.color.amber
+  const amber = c('ui_accent') ?? c('banner_accent') ?? d.color.amber
   const accent = c('banner_accent') ?? c('banner_title') ?? d.color.amber
   const dim = c('banner_dim') ?? d.color.dim
 
