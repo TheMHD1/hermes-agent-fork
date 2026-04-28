@@ -1,15 +1,15 @@
 import { Box, Text, useStdout } from '@hermes/ink'
 
-import { artWidth, caduceus, CADUCEUS_WIDTH, type LineStyle, logo, LOGO_WIDTH } from '../banner.js'
+import { artWidth, caduceus, CADUCEUS_WIDTH, logo, LOGO_WIDTH } from '../banner.js'
 import { flat } from '../lib/text.js'
 import type { Theme } from '../theme.js'
 import type { PanelSection, SessionInfo } from '../types.js'
 
-export function ArtLines({ lines }: { lines: [string, string, LineStyle?][] }) {
+export function ArtLines({ lines }: { lines: [string, string][] }) {
   return (
     <>
-      {lines.map(([c, text, style], i) => (
-        <Text bold={style?.bold} color={c} dimColor={style?.dim} key={i}>
+      {lines.map(([c, text], i) => (
+        <Text color={c} key={i}>
           {text}
         </Text>
       ))}

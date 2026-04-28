@@ -1,4 +1,4 @@
-const RICH_RE = /\[((?:bold\s+)?(?:dim\s+)?)(#(?:[0-9a-fA-F]{3,8}))\]([\s\S]*?)(\[\/\])/g
+const RICH_RE = /\[(?:bold\s+)?(?:dim\s+)?(#(?:[0-9a-fA-F]{3,8}))\]([\s\S]*?)(\[\/\])/g
 
 export function parseRichMarkup(markup: string): Line[] {
   const lines: Line[] = []
@@ -29,10 +29,7 @@ export function parseRichMarkup(markup: string): Line[] {
         lines.push(['', before])
       }
 
-      const attrs = m[1] ?? ''
-      const color = m[2]!
-      const text = m[3]!
-      lines.push([color, text, { bold: /\bbold\b/.test(attrs), dim: /\bdim\b/.test(attrs) }])
+      lines.push([m[1]!, m[2]!])
       cursor = m.index! + m[0].length
     }
 
@@ -84,7 +81,7 @@ interface BannerPalette {
 const colorize = (art: string[], gradient: readonly number[], c: BannerPalette): Line[] => {
   const p = [c.gold, c.amber, c.bronze, c.dim]
 
-  return art.map((text, i) => [p[gradient[i]!] ?? c.dim, text, { bold: i < 2 }])
+  return art.map((text, i) => [p[gradient[i]!] ?? c.dim, text])
 }
 
 export const LOGO_WIDTH = 98
@@ -98,9 +95,4 @@ export const caduceus = (c: BannerPalette, customHero?: string): Line[] =>
 
 export const artWidth = (lines: Line[]) => lines.reduce((m, [, t]) => Math.max(m, t.length), 0)
 
-export interface LineStyle {
-  bold?: boolean
-  dim?: boolean
-}
-
-type Line = [string, string, LineStyle?]
+type Line = [string, string]
