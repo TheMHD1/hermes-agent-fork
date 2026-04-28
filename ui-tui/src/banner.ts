@@ -68,30 +68,35 @@ const CADUCEUS_ART = [
   '⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀'
 ]
 
-const LOGO_GRADIENT = [0, 0, 1, 1, 2, 2] as const
-const CADUC_GRADIENT = [2, 2, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 3, 3, 3] as const
+const LOGO_COLORS = ['#FFD700', '#FFD700', '#FFBF00', '#FFBF00', '#CD7F32', '#CD7F32'] as const
+const CADUCEUS_COLORS = [
+  '#CD7F32',
+  '#CD7F32',
+  '#FFBF00',
+  '#FFBF00',
+  '#FFD700',
+  '#FFD700',
+  '#FFBF00',
+  '#FFBF00',
+  '#CD7F32',
+  '#CD7F32',
+  '#B8860B',
+  '#B8860B',
+  '#B8860B',
+  '#B8860B',
+  '#B8860B'
+] as const
 
-interface BannerPalette {
-  amber: string
-  bronze: string
-  dim: string
-  gold: string
-}
-
-const colorize = (art: string[], gradient: readonly number[], c: BannerPalette): Line[] => {
-  const p = [c.gold, c.amber, c.bronze, c.dim]
-
-  return art.map((text, i) => [p[gradient[i]!] ?? c.dim, text])
-}
+const colorize = (art: string[], colors: readonly string[]): Line[] => art.map((text, i) => [colors[i] ?? '#B8860B', text])
 
 export const LOGO_WIDTH = 98
 export const CADUCEUS_WIDTH = 30
 
-export const logo = (c: BannerPalette, customLogo?: string): Line[] =>
-  customLogo ? parseRichMarkup(customLogo) : colorize(LOGO_ART, LOGO_GRADIENT, c)
+export const logo = (customLogo?: string): Line[] =>
+  customLogo ? parseRichMarkup(customLogo) : colorize(LOGO_ART, LOGO_COLORS)
 
-export const caduceus = (c: BannerPalette, customHero?: string): Line[] =>
-  customHero ? parseRichMarkup(customHero) : colorize(CADUCEUS_ART, CADUC_GRADIENT, c)
+export const caduceus = (customHero?: string): Line[] =>
+  customHero ? parseRichMarkup(customHero) : colorize(CADUCEUS_ART, CADUCEUS_COLORS)
 
 export const artWidth = (lines: Line[]) => lines.reduce((m, [, t]) => Math.max(m, t.length), 0)
 

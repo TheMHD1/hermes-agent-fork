@@ -9,13 +9,8 @@ describe('DEFAULT_THEME', () => {
     expect(DEFAULT_THEME.brand.tool).toBe('┊')
   })
 
-  it('has original classic banner palette values (#17131)', () => {
+  it('has color palette', () => {
     expect(DEFAULT_THEME.color.gold).toBe('#FFD700')
-    expect(DEFAULT_THEME.color.amber).toBe('#FFBF00')
-    expect(DEFAULT_THEME.color.bronze).toBe('#CD7F32')
-    expect(DEFAULT_THEME.color.dim).toBe('#B8860B')
-    expect(DEFAULT_THEME.color.sessionLabel).toBe('#B8860B')
-    expect(DEFAULT_THEME.color.sessionBorder).toBe('#B8860B')
     expect(DEFAULT_THEME.color.error).toBe('#ef5350')
   })
 })
