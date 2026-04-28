@@ -79,9 +79,7 @@ describe('detectLightMode', () => {
 
   it('treats COLORFGBG as authoritative when present so it dominates fallbacks', () => {
     // A dark COLORFGBG beats a hypothetical light TERM_PROGRAM allow-list entry.
-    expect(
-      detectLightMode({ COLORFGBG: '15;0', TERM_PROGRAM: 'Apple_Terminal' as unknown as string })
-    ).toBe(false)
+    expect(detectLightMode({ COLORFGBG: '15;0', TERM_PROGRAM: 'Apple_Terminal' })).toBe(false)
   })
 })
 

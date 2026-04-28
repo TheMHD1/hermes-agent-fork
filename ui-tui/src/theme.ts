@@ -189,10 +189,11 @@ const FALSE_RE = /^(?:0|false|no|off)$/
 // `HERMES_TUI_LIGHT=1` or `HERMES_TUI_THEME=light`.
 const LIGHT_DEFAULT_TERM_PROGRAMS = new Set<string>()
 
-// Best-effort RGB → luminance check.  Some terminals emit
-// `COLORTERM=truecolor` and a hex/`r/g/b` background hint via
-// `HERMES_TUI_BACKGROUND` (or a future OSC11 query result we cache);
-// allow callers to drop a pre-resolved value into the env.
+// Best-effort RGB → luminance check.  Currently only accepts a 3- or
+// 6-digit hex value (with or without a leading `#`); the env var name
+// `HERMES_TUI_BACKGROUND` is intentionally generic so a future OSC11
+// query helper can cache its answer there too, but additional formats
+// (rgb()/hsl()/named colours) would need explicit parsing here first.
 const LUMA_LIGHT_THRESHOLD = 0.6
 
 function backgroundLuminance(raw: string): null | number {
@@ -220,16 +221,21 @@ function backgroundLuminance(raw: string): null | number {
 
 // Pick light vs dark with ordered, explainable signals (#11300):
 //
-//   1. `HERMES_TUI_LIGHT=1` / `HERMES_TUI_THEME=light` (explicit override).
-//   2. `HERMES_TUI_BACKGROUND` hex / rgb hint (advanced users + tests).
-//   3. `COLORFGBG` last field — XFCE / rxvt / Terminal.app set this to
-//      7 or 15 on light profiles (#11300 original heuristic).
-//   4. Ghostty/Warp light defaults via `TERM_PROGRAM` allow-list; this
-//      is opt-in by terminal so we don't override the user's intent on
-//      modern emulators that don't set COLORFGBG.
+//   1. `HERMES_TUI_LIGHT` boolean — `1`/`true`/`yes`/`on` → light;
+//      `0`/`false`/`no`/`off` → dark.  Either explicit value wins
+//      regardless of any later signal.
+//   2. `HERMES_TUI_THEME` named override — `light` / `dark` win over
+//      every signal below.
+//   3. `HERMES_TUI_BACKGROUND` hex hint (3- or 6-digit) — luminance
+//      ≥ LUMA_LIGHT_THRESHOLD → light.
+//   4. `COLORFGBG` last field — XFCE / rxvt / Terminal.app emit
+//      slot 7 or 15 on light profiles; 0–15 ranges are otherwise
+//      treated as authoritatively dark so the TERM_PROGRAM
+//      allow-list below cannot override an explicit dark profile.
+//   5. `TERM_PROGRAM` light-default allow-list (currently empty).
 //
-// Anything we can't decide stays dark — the default Hermes palette is
-// the dark one.
+// Anything we can't decide stays dark — the default Hermes palette
+// is the dark one.
 export function detectLightMode(env: NodeJS.ProcessEnv = process.env): boolean {
   const lightFlag = (env.HERMES_TUI_LIGHT ?? '').trim().toLowerCase()
 
