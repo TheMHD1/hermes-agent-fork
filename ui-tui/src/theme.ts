@@ -196,6 +196,13 @@ const LIGHT_DEFAULT_TERM_PROGRAMS = new Set<string>()
 // (rgb()/hsl()/named colours) would need explicit parsing here first.
 const LUMA_LIGHT_THRESHOLD = 0.6
 
+// Strict allow-list: parseInt(..., 16) silently truncates at the first
+// non-hex character (e.g. `fffgff` would parse as `fff` and yield a
+// false-positive "white" reading), so reject anything that doesn't match
+// the canonical 3- or 6-digit shape up front.
+const HEX_3_RE = /^[0-9a-f]{3}$/
+const HEX_6_RE = /^[0-9a-f]{6}$/
+
 function backgroundLuminance(raw: string): null | number {
   const v = raw.trim().toLowerCase()
 
@@ -204,14 +211,13 @@ function backgroundLuminance(raw: string): null | number {
   }
 
   const hex = v.startsWith('#') ? v.slice(1) : v
-  const rgb =
-    hex.length === 6
-      ? [parseInt(hex.slice(0, 2), 16), parseInt(hex.slice(2, 4), 16), parseInt(hex.slice(4, 6), 16)]
-      : hex.length === 3
-        ? [parseInt(hex[0]! + hex[0]!, 16), parseInt(hex[1]! + hex[1]!, 16), parseInt(hex[2]! + hex[2]!, 16)]
-        : null
+  const rgb = HEX_6_RE.test(hex)
+    ? [parseInt(hex.slice(0, 2), 16), parseInt(hex.slice(2, 4), 16), parseInt(hex.slice(4, 6), 16)]
+    : HEX_3_RE.test(hex)
+      ? [parseInt(hex[0]! + hex[0]!, 16), parseInt(hex[1]! + hex[1]!, 16), parseInt(hex[2]! + hex[2]!, 16)]
+      : null
 
-  if (!rgb || rgb.some(n => Number.isNaN(n))) {
+  if (!rgb) {
     return null
   }
 

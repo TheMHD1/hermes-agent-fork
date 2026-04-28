@@ -77,6 +77,18 @@ describe('detectLightMode', () => {
     expect(detectLightMode({ HERMES_TUI_BACKGROUND: 'not-a-colour' })).toBe(false)
   })
 
+  it('rejects partially-invalid hex instead of silently truncating', () => {
+    // `parseInt('fffgff'.slice(2,4), 16)` would return 15 — the strict
+    // regex must reject these inputs so they fall through to default-
+    // dark instead of producing a false-positive light reading.
+    expect(detectLightMode({ HERMES_TUI_BACKGROUND: '#fffgff' })).toBe(false)
+    expect(detectLightMode({ HERMES_TUI_BACKGROUND: 'ffggff' })).toBe(false)
+    expect(detectLightMode({ HERMES_TUI_BACKGROUND: '#xyz' })).toBe(false)
+    // Wrong length also rejected (no implicit padding/truncation).
+    expect(detectLightMode({ HERMES_TUI_BACKGROUND: '#fffff' })).toBe(false)
+    expect(detectLightMode({ HERMES_TUI_BACKGROUND: '#fffffff' })).toBe(false)
+  })
+
   it('treats COLORFGBG as authoritative when present so it dominates fallbacks', () => {
     // A dark COLORFGBG beats a hypothetical light TERM_PROGRAM allow-list entry.
     expect(detectLightMode({ COLORFGBG: '15;0', TERM_PROGRAM: 'Apple_Terminal' })).toBe(false)
